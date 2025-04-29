@@ -5,7 +5,7 @@ const bodyParser = require("body-parser");
 const app = express();
 app.use(bodyParser.json());
 
-// Enable CORS for dev
+// Enable CORS for development
 app.use((req, res, next) => {
     res.setHeader("Access-Control-Allow-Origin", "*");
     res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
@@ -20,18 +20,18 @@ app.post("/generate-excel", async (req, res) => {
         const workbook = await XlsxPopulate.fromBlankAsync();
         const sheet = workbook.sheet("Sheet1");
 
-        // Insert headers (labels)
+        // Add headers
         const keys = Object.keys(labels);
         keys.forEach((key, index) => {
             const col = String.fromCharCode(65 + index);
             sheet.cell(`${col}1`).value(labels[key]);
         });
 
+        // Add data
         data.forEach((row, rowIndex) => {
             keys.forEach((key, colIndex) => {
                 const col = String.fromCharCode(65 + colIndex);
-                const value = row[key] ?? "";
-                sheet.cell(`${col}${rowIndex + 2}`).value(value);
+                sheet.cell(`${col}${rowIndex + 2}`).value(row[key] ?? "");
             });
         });
 
@@ -46,4 +46,4 @@ app.post("/generate-excel", async (req, res) => {
     }
 });
 
-module.exports = app;
+module.exports = app; // Export the app for Vercel
